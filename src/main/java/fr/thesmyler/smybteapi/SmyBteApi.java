@@ -3,6 +3,7 @@ package fr.thesmyler.smybteapi;
 import static fr.thesmyler.smybteapi.util.SmyBteApiUtil.getPropertyOrEnv;
 import static fr.thesmyler.smybteapi.util.SmyBteApiUtil.touchJsonResponse;
 import static spark.Spark.afterAfter;
+import static spark.Spark.after;
 import static spark.Spark.exception;
 import static spark.Spark.get;
 import static spark.Spark.internalServerError;
@@ -26,6 +27,7 @@ import fr.thesmyler.smybteapi.exception.ErrorHandler;
 import fr.thesmyler.smybteapi.projection.ProjectionRoutes;
 import spark.Request;
 import spark.Response;
+import spark.Filter;
 
 /**
  * Main class for this API
@@ -111,6 +113,10 @@ public class SmyBteApi {
         get("/projection/toGeo", ProjectionRoutes::toGeo);
         get("/projection/fromGeo", ProjectionRoutes::fromGeo);
         get("/webmercator/resolution", OtherRoutes::mercatorRes);
+	after((Filter) (request, response) -> {
+            response.header("Access-Control-Allow-Origin", "*");
+            response.header("Access-Control-Allow-Methods", "*");
+        });
         afterAfter(SmyBteApi::logRequestResponsePair);
     }
     
